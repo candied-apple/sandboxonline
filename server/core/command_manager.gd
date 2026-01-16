@@ -133,10 +133,10 @@ func _handle_fly(sender_id: int, parts: PackedStringArray) -> void:
 	
 	_send_system_message(sender_id, "Flight %s for %s" % ["enabled" if can_fly else "disabled", target_name])
 
-func _find_uuid_by_name(name: String) -> String:
+func _find_uuid_by_name(username: String) -> String:
 	for peer_id in server_node.connected_players:
 		var p = server_node.connected_players[peer_id]
-		if p["username"] == name:
+		if p["username"] == username:
 			return p["uuid"]
 	return ""
 

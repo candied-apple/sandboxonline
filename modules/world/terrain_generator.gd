@@ -7,10 +7,10 @@ const CHUNK_SIZE = 256
 const SUBDIVISION = 128 # Vertex density
 const HEIGHT_SCALE = 20.0
 
-func generate_terrain(seed: int) -> void:
-	print("Generating terrain with seed: %d" % seed)
+func generate_terrain(terrain_seed: int) -> void:
+	print("Generating terrain with seed: %d" % terrain_seed)
 	var noise = FastNoiseLite.new()
-	noise.seed = seed
+	noise.seed = terrain_seed
 	noise.noise_type = FastNoiseLite.TYPE_PERLIN
 	noise.frequency = 0.01
 	noise.fractal_octaves = 5

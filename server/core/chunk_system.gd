@@ -1,6 +1,6 @@
 extends Node
 
-const PacketChunkData = preload("res://modules/world/packet_chunk_data.gd")
+const PACKET_CHUNK_DATA = preload("res://modules/world/packet_chunk_data.gd")
 const RegionManager = preload("res://server/core/region_manager.gd")
 
 var chunk_size: int = 32
@@ -14,11 +14,11 @@ var player_loaded_chunks: Dictionary = {}
 
 var region_manager: Node = null
 
-func setup(seed: int, p_chunk_size: int, p_world_size: int) -> void:
+func setup(world_seed: int, p_chunk_size: int, p_world_size: int) -> void:
 	chunk_size = p_chunk_size
 	world_size = p_world_size
 	noise = FastNoiseLite.new()
-	noise.seed = seed
+	noise.seed = world_seed
 	noise.noise_type = FastNoiseLite.TYPE_PERLIN
 	noise.frequency = 0.02
 	
@@ -79,13 +79,13 @@ func process_player(player_id: int, position: Vector3, view_distance: int, serve
 			var key = Vector2i(x, z)
 			
 			if world_size > 0:
-				var max_chunks = world_size / chunk_size
+				var max_chunks = int(float(world_size) / float(chunk_size))
 				if abs(x) > max_chunks or abs(z) > max_chunks:
 					continue
 			
 			if not player_loaded_chunks[player_id].has(key):
 				var data = get_chunk_data(x, z)
-				var packet = PacketChunkData.new()
+				var packet = PACKET_CHUNK_DATA.new()
 				packet.chunk_x = x
 				packet.chunk_z = z
 				packet.height_data = data

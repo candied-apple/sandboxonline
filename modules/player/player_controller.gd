@@ -25,10 +25,10 @@ const LERP_SPEED = 10.0 # Adjust for smoothness vs responsiveness
 
 var _username: String = ""
 
-func set_username(name: String) -> void:
-	_username = name
+func set_username(username: String) -> void:
+	_username = username
 	if name_label:
-		name_label.text = name
+		name_label.text = username
 
 func setup_puppet() -> void:
 	is_puppet = true

@@ -1,11 +1,11 @@
 extends Node
 
-const PacketSpawnPlayer = preload("res://modules/world/packet_spawn_player.gd")
-const PacketPlayerMove = preload("res://modules/world/packet_player_move.gd")
-const PacketDespawnPlayer = preload("res://modules/world/packet_despawn_player.gd")
-const PacketChat = preload("res://modules/chat/packet_chat.gd")
+const PACKET_SPAWN_PLAYER = preload("res://modules/world/packet_spawn_player.gd")
+const PACKET_PLAYER_MOVE = preload("res://modules/world/packet_player_move.gd")
+const PACKET_DESPAWN_PLAYER = preload("res://modules/world/packet_despawn_player.gd")
+const PACKET_CHAT = preload("res://modules/chat/packet_chat.gd")
 const ChunkSystem = preload("res://server/core/chunk_system.gd")
-const CommandManager = preload("res://server/core/command_manager.gd")
+const COMMAND_MANAGER = preload("res://server/core/command_manager.gd")
 
 var server_settings = {
 	"port": 7777,
@@ -30,7 +30,7 @@ func _ready() -> void:
 	chunk_system.setup(server_settings["seed"], server_settings["chunk_size"], server_settings["world_size"])
 	add_child(chunk_system)
 	
-	command_manager = CommandManager.new(self)
+	command_manager = COMMAND_MANAGER.new(self)
 	
 	start_server()
 	
@@ -141,7 +141,7 @@ func _on_peer_disconnected(id: int) -> void:
 	if connected_players.has(id):
 		connected_players.erase(id)
 	
-	var packet = PacketDespawnPlayer.new()
+	var packet = PACKET_DESPAWN_PLAYER.new()
 	packet.id = id
 	
 	for peer_id in connected_players:
@@ -177,7 +177,7 @@ func _handle_packet(sender_id: int, packet: Packet) -> void:
 		send_packet_to_client(sender_id, response)
 		
 		# --- SPAWN LOGIC ---
-		var new_spawn = PacketSpawnPlayer.new()
+		var new_spawn = PACKET_SPAWN_PLAYER.new()
 		new_spawn.id = sender_id
 		new_spawn.position = Vector3(0, 50, 0)
 		new_spawn.username = packet.username
@@ -189,7 +189,7 @@ func _handle_packet(sender_id: int, packet: Packet) -> void:
 			send_packet_to_client(peer_id, new_spawn)
 			
 			# Send old guy to new guy
-			var old_spawn = PacketSpawnPlayer.new()
+			var old_spawn = PACKET_SPAWN_PLAYER.new()
 			old_spawn.id = peer_id
 			if connected_players[peer_id].has("position"):
 				old_spawn.position = connected_players[peer_id]["position"]
@@ -201,7 +201,7 @@ func _handle_packet(sender_id: int, packet: Packet) -> void:
 		# Send new guy to himself
 		send_packet_to_client(sender_id, new_spawn)
 		
-	elif packet is PacketPlayerMove:
+	elif packet is PACKET_PLAYER_MOVE:
 		# Update internal position
 		if connected_players.has(sender_id):
 			connected_players[sender_id]["position"] = packet.position
@@ -211,7 +211,7 @@ func _handle_packet(sender_id: int, packet: Packet) -> void:
 			if peer_id != sender_id:
 				send_packet_to_client(peer_id, packet)
 				
-	elif packet is PacketChat:
+	elif packet is PACKET_CHAT:
 		# Command Check
 		if packet.message.begins_with("/"):
 			if command_manager:
@@ -224,7 +224,7 @@ func _handle_packet(sender_id: int, packet: Packet) -> void:
 			
 			print("[Chat] %s: %s" % [username, packet.message])
 				
-			var broadcast = PacketChat.new()
+			var broadcast = PACKET_CHAT.new()
 			broadcast.sender_id = sender_id
 			broadcast.username = username
 			broadcast.message = packet.message

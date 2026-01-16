@@ -1,11 +1,11 @@
 extends Node
 
-const PacketSpawnPlayer = preload("res://modules/world/packet_spawn_player.gd")
-const PacketPlayerMove = preload("res://modules/world/packet_player_move.gd")
-const PacketDespawnPlayer = preload("res://modules/world/packet_despawn_player.gd")
-const PacketChat = preload("res://modules/chat/packet_chat.gd")
-const PacketChunkData = preload("res://modules/world/packet_chunk_data.gd")
-const PacketFlyAbility = preload("res://modules/world/packet_fly_ability.gd")
+const PACKET_SPAWN_PLAYER = preload("res://modules/world/packet_spawn_player.gd")
+const PACKET_PLAYER_MOVE = preload("res://modules/world/packet_player_move.gd")
+const PACKET_DESPAWN_PLAYER = preload("res://modules/world/packet_despawn_player.gd")
+const PACKET_CHAT = preload("res://modules/chat/packet_chat.gd")
+const PACKET_CHUNK_DATA = preload("res://modules/world/packet_chunk_data.gd")
+const PACKET_FLY_ABILITY = preload("res://modules/world/packet_fly_ability.gd")
 
 var chat_ui: Node = null
 var main_menu: Node = null
@@ -25,15 +25,15 @@ func _ready() -> void:
 		main_menu.connect("connect_requested", _on_connect_requested)
 		add_child(main_menu)
 
-func _generate_uuid(name: String) -> String:
-	var hash = name.md5_text()
+func _generate_uuid(username: String) -> String:
+	var uuid_hash = username.md5_text()
 	# Format as UUID: 8-4-4-4-12
 	return "%s-%s-%s-%s-%s" % [
-		hash.substr(0, 8),
-		hash.substr(8, 4),
-		hash.substr(12, 4),
-		hash.substr(16, 4),
-		hash.substr(20, 12)
+		uuid_hash.substr(0, 8),
+		uuid_hash.substr(8, 4),
+		uuid_hash.substr(12, 4),
+		uuid_hash.substr(16, 4),
+		uuid_hash.substr(20, 12)
 	]
 
 func _on_connect_requested(username: String, ip_string: String) -> void:
@@ -158,20 +158,20 @@ func _process_incoming_packet(data: PackedByteArray) -> void:
 func _handle_packet(packet: Packet) -> void:
 	if packet is PacketHandshake:
 		log_msg("Server says: [color=green]%s[/color]" % packet.message)
-	elif packet is PacketChunkData:
+	elif packet is PACKET_CHUNK_DATA:
 		_handle_chunk_data(packet)
-	elif packet is PacketSpawnPlayer:
+	elif packet is PACKET_SPAWN_PLAYER:
 		_handle_spawn_player(packet)
-	elif packet is PacketPlayerMove:
+	elif packet is PACKET_PLAYER_MOVE:
 		_handle_player_move(packet)
-	elif packet is PacketDespawnPlayer:
+	elif packet is PACKET_DESPAWN_PLAYER:
 		_handle_despawn_player(packet)
-	elif packet is PacketChat:
+	elif packet is PACKET_CHAT:
 		_handle_chat(packet)
-	elif packet is PacketFlyAbility:
+	elif packet is PACKET_FLY_ABILITY:
 		_handle_fly_ability(packet)
 
-func _handle_fly_ability(packet: PacketFlyAbility) -> void:
+func _handle_fly_ability(packet: PACKET_FLY_ABILITY) -> void:
 	if local_player_node:
 		local_player_node.can_fly_ability = packet.can_fly
 		if not packet.can_fly:
@@ -249,7 +249,7 @@ func _physics_process(_delta: float) -> void:
 		var current_time = Time.get_ticks_msec() / 1000.0
 		if current_time - last_sent_time > 0.05:
 			last_sent_time = current_time
-			var packet = PacketPlayerMove.new()
+			var packet = PACKET_PLAYER_MOVE.new()
 			packet.id = multiplayer.get_unique_id()
 			packet.position = local_player_node.position
 			packet.rotation = local_player_node.rotation
