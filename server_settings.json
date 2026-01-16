@@ -1,0 +1,12 @@
+{
+	"chunk_size": 32,
+	"max_clients": 100,
+	"ops": [],
+	"permissions": {
+
+	},
+	"port": 7777,
+	"seed": 0,
+	"view_distance": 4,
+	"world_size": 0
+}

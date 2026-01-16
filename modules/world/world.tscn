@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3 uid="uid://d3x6x4x6x4x6"]
+
+[ext_resource type="Script" path="res://modules/world/terrain_generator.gd" id="1_terrain"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
+
+[sub_resource type="Sky" id="Sky_sky"]
+sky_material = SubResource("ProceduralSkyMaterial_sky")
+
+[sub_resource type="Environment" id="Environment_sky"]
+background_mode = 2
+sky = SubResource("Sky_sky")
+
+[node name="World" type="Node3D"]
+
+[node name="Terrain" type="StaticBody3D" parent="."]
+script = ExtResource("1_terrain")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Terrain"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Terrain"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 10, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_sky")
